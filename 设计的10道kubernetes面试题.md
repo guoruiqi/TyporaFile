@@ -40,7 +40,7 @@ affinity:
 
 ```dockerfile
 FROM centos:latest
-ARG JDK_HOME=/root/jdk1.8.0_142
+ENV JDK_HOME=/root/jdk1.8.0_142
 WORKDIR /root
 ADD jdk-8u142-linux-x64.tar.gz /root
 ENV JAVA_HOME=/root/jdk1.8.0_142
