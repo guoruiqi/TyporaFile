@@ -12,32 +12,17 @@ e.docker官方建议当要从远程复制文件时，尽量用curl/wget命令来
 
 #### Namespace
 
-Linux 里面的 Namespace 机制。而 Namespace 的使用方式也非常有意思：它其实只是 Linux 创建新进程的一个可选参数。我们知道，在 Linux 系统中创建线程的系统调用是 clone()，
+**Linux 里面的 Namespace 机制。而 Namespace 的使用方式也非常有意思：它其实只是 Linux 创建新进程的一个可选参数。我们知道，在 Linux 系统中创建线程的系统调用是 clone()，比如说PID namespace就是调用clone_newpid ，调用之后返回Pid是1，之所以说“看到”，是因为这只是一个“障眼法”，在宿主机真实的进程空间里，这个进程的 PID 还是真实的数值，比如 100**
 
-而当我们用 clone() 系统调用创建一个新进程时，就可以在参数中指定 CLONE_NEWPID 参数
+![image-20210803181353262](image-20210803181353262.png)
 
-```
-int pid = clone(main_function, stack_size, CLONE_NEWPID | SIGCHLD, NULL); 
-```
 
-这时，新创建的这个进程将会“看到”一个全新的进程空间，在这个进程空间里，它的 PID 是 1。之所以说“看到”，是因为这只是一个“障眼法”，在宿主机真实的进程空间里，这个进程的 PID 还是真实的数值，比如 100。
-
-Mount Namespace，用于让被隔离进程只看到当前 Namespace 里的挂载点信息；
-
-Network Namespace，用于让被隔离进程看到当前 Namespace 里的网络设备和配置。
-
-进程隔离：pid namespace
-网络隔离：net namespace
-挂载点隔离：mount namespace
-进程间通信隔离：ipc namespace
-独立的用户、用户组：user namespace
-独立的hostname、domain name：uts namespace
 
 
 
 #### Cgroups
 
-Linux Cgroups 的设计还是比较易用的，简单粗暴地理解呢，它就是一个子系统目录加上一组资源限制文件的组合。而对于 Docker 等 Linux 容器项目来说，它们只需要在每个子系统下面，为每个容器创建一个控制组（即创建一个新目录），然后在启动容器进程之后，把这个进程的 PID 填写到对应控制组的 tasks 文件中就可以了。
+Cgroup 是 Control Groups 的缩写，是 Linux 内核提供的一种可以限制、记录、隔离进程组 (processgroups) 所使用的物力资源 (如 cpu memory i/o 等等) 的机制。它就是一个子系统目录加上一组资源限制文件的组合。而对于 Docker 等 Linux 容器项目来说，它们只需要在每个子系统下面，为每个容器创建一个控制组（即创建一个新目录），然后在启动容器进程之后，把这个进程的 PID 填写到对应控制组的 tasks 文件中就可以了。
 
 /sys/fs/cgroups
 
@@ -55,7 +40,7 @@ memory，为进程设定内存使用的限制。
 
 
 
-如何改变文件视图
+如何改变文件视图使用chroot 命令：
 
 在 Linux 操作系统里，有一个名为 chroot 的命令可以帮助你在 shell 中方便地完成这个工作。顾名思义，它的作用就是帮你“change root file system”，即改变进程的根目录到你指定的位置。
 
@@ -132,3 +117,4 @@ WorkDir：用于实现copy_up操作。
 
 
 ## zookeeper 的选举算法：
+
